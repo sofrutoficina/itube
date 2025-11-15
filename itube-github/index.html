@@ -1,0 +1,3839 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="ITuBè? - El teu seguiment emocional personal">
+    <meta name="theme-color" content="#4A90E2">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="ITuBè?">
+    <title>ITuBè v3.0 COMPLETA - Registre Emocional</title>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #4A90E2;
+    --secondary-color: #52BE80;
+    --danger-color: #E74C3C;
+    --background: #F8F9FA;
+    --surface: #FFFFFF;
+    --text-primary: #2C3E50;
+    --text-secondary: #7F8C8D;
+    --border: #E1E8ED;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --pill-bg: #F0F3F7;
+    --pill-selected: #4A90E2;
+    --reminder-color: #FF6B6B;
+}
+
+/* Mode fosc */
+body.dark-mode {
+    --background: #1a1a1a;
+    --surface: #2d2d2d;
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --border: #404040;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --pill-bg: #3a3a3a;
+    --pill-selected: #5AA0F2;
+}
+
+body.dark-mode .header {
+    background: linear-gradient(135deg, #2d5f8d, #3d7f60);
+}
+
+body.dark-mode .day-cell.today {
+    background: #1e3a5f;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--background);
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-tap-highlight-color: transparent;
+    padding-bottom: 20px;
+}
+
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 15px;
+    padding: 20px 10px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 12px;
+    color: white;
+}
+
+.header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.subtitle {
+    font-size: 0.85rem;
+    opacity: 0.95;
+}
+
+.version-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+.stats-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    overflow-x: auto;
+    padding: 5px 0;
+}
+
+.stat-card {
+    flex: 1;
+    min-width: 100px;
+    background: var(--surface);
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 4px var(--shadow);
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 3px;
+}
+
+.success-message {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--secondary-color);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: top 0.3s ease;
+    z-index: 200;
+    text-align: center;
+    max-width: 300px;
+}
+
+.success-message.show {
+    top: 20px;
+}
+
+.success-message h3 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.success-message p {
+    font-size: 0.85rem;
+    opacity: 0.95;
+}
+
+.quick-register {
+    background: var(--surface);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px var(--shadow);
+    margin-bottom: 15px;
+}
+
+.quick-register h2 {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    text-align: center;
+    color: var(--text-primary);
+}
+
+.emotions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.emotion-btn {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.emotion-btn:active {
+    transform: scale(0.98);
+}
+
+.emotion-btn.selected {
+    font-weight: 600;
+    border-width: 3px;
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.selected-count {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+/* Secció d'intensitat - SLIDER 1-10 */
+.intensity-section {
+    margin-bottom: 15px;
+}
+
+.intensity-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.intensity-slider-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.intensity-slider-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.intensity-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    border-radius: 5px;
+    background: linear-gradient(to right, 
+        #E8F5E9 0%, 
+        #81C784 25%, 
+        #FFD54F 50%, 
+        #FF8A65 75%, 
+        #E57373 100%);
+    outline: none;
+    opacity: 0.9;
+    transition: opacity 0.2s;
+}
+
+.intensity-slider:hover {
+    opacity: 1;
+}
+
+.intensity-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    border: 3px solid white;
+    transition: all 0.2s ease;
+}
+
+.intensity-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.intensity-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    border: 3px solid white;
+    transition: all 0.2s ease;
+}
+
+.intensity-slider::-moz-range-thumb:hover {
+    transform: scale(1.2);
+}
+
+.intensity-value-display {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    min-width: 40px;
+    text-align: center;
+}
+
+.intensity-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    padding: 0 5px;
+}
+
+.intensity-description {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    min-height: 20px;
+}
+
+/* Secció de notes */
+.notes-section {
+    margin-bottom: 15px;
+}
+
+.notes-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    resize: vertical;
+    background: var(--surface);
+    color: var(--text-primary);
+}
+
+.register-footer {
+    display: flex;
+    gap: 10px;
+}
+
+.register-footer .btn {
+    flex: 1;
+}
+
+.btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px var(--shadow);
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-secondary {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 2px solid var(--border);
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.calendar-section {
+    background: var(--surface);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px var(--shadow);
+    margin-bottom: 15px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.calendar-header h2 {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+.calendar-nav {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 700;
+}
+
+.nav-btn:active {
+    transform: scale(0.95);
+}
+
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.weekdays div {
+    padding: 5px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.day-cell {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: var(--background);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    padding: 4px;
+    font-size: 0.85rem;
+}
+
+.day-cell:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.05);
+}
+
+.day-cell.other-month {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.day-cell.other-month:hover {
+    background: var(--background);
+    color: var(--text-primary);
+    transform: none;
+}
+
+.day-cell.today {
+    background: #E3F2FD;
+    font-weight: 700;
+    border: 2px solid var(--primary-color);
+}
+
+.day-cell.has-entry {
+    font-weight: 600;
+}
+
+.emotion-dots {
+    display: flex;
+    gap: 2px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 100%;
+    margin-top: 2px;
+}
+
+.emotion-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    overflow-y: auto;
+}
+
+.modal.show {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px 10px;
+}
+
+.modal-content {
+    background: var(--surface);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px var(--shadow);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    z-index: 10;
+}
+
+.modal-header h3 {
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+    background: var(--border);
+    color: var(--text-primary);
+}
+
+#modalBody {
+    padding: 20px;
+}
+
+/* Context display in modal */
+.entry-item {
+    padding: 15px;
+    margin-bottom: 15px;
+    background: var(--background);
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.entry-time {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.entry-emotions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.emotion-tag {
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.entry-intensity {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.entry-notes {
+    font-size: 0.9rem;
+    padding: 10px;
+    background: var(--surface);
+    border-radius: 8px;
+    border-left: 3px solid var(--secondary-color);
+    margin-top: 10px;
+    font-style: italic;
+}
+
+.entry-context {
+    margin-top: 12px;
+    padding: 10px;
+    background: var(--surface);
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.context-title {
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.context-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.context-tag {
+    padding: 4px 10px;
+    background: var(--pill-bg);
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+}
+
+.insights-section {
+    background: var(--surface);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px var(--shadow);
+    margin-bottom: 15px;
+}
+
+.insights-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.insight-card {
+    background: var(--background);
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--secondary-color);
+}
+
+.insight-card:last-child {
+    margin-bottom: 0;
+}
+
+.insight-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.insight-text {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.tools-section {
+    background: var(--surface);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px var(--shadow);
+    margin-bottom: 15px;
+}
+
+.tools-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+.tool-btn {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px var(--shadow);
+}
+
+.tool-btn:active {
+    transform: scale(0.98);
+}
+
+.tool-btn:last-child {
+    margin-bottom: 0;
+}
+
+.file-input {
+    display: none;
+}
+
+/* ================================================
+   FASE 1: TRIGGERS CONTEXTUALS
+================================================ */
+
+.context-section {
+    background: var(--surface);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px var(--shadow);
+    margin-bottom: 15px;
+}
+
+.context-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.context-header h3 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toggle-icon {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    transition: transform 0.3s ease;
+}
+
+.toggle-icon.open {
+    transform: rotate(180deg);
+}
+
+.context-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.context-content.open {
+    max-height: 500px;
+}
+
+.context-group {
+    margin-bottom: 15px;
+}
+
+.context-group:last-child {
+    margin-bottom: 0;
+}
+
+.context-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    display: block;
+}
+
+.context-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.context-pill {
+    padding: 8px 14px;
+    background: var(--pill-bg);
+    border: 2px solid transparent;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-primary);
+    user-select: none;
+}
+
+.context-pill:active {
+    transform: scale(0.95);
+}
+
+.context-pill.selected {
+    background: var(--pill-selected);
+    color: white;
+    border-color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* ================================================
+   FASE 2: ANÀLISI INTEL·LIGENT
+================================================ */
+
+.no-insights {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding: 20px;
+}
+
+/* ================================================
+   FASE 4: MILLORES UX
+================================================ */
+
+/* Gestió d'emocions personalitzades */
+.emotion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.custom-emotion-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    background: var(--background);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.emotion-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.emotion-emoji {
+    font-size: 1.5rem;
+}
+
+.emotion-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.emotion-color-preview {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+}
+
+.emotion-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.icon-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.icon-btn.delete:hover {
+    background: var(--danger-color);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: var(--surface);
+    color: var(--text-primary);
+}
+
+.emoji-picker {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+}
+
+.emoji-option {
+    font-size: 1.8rem;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    border: 2px solid transparent;
+}
+
+.emoji-option:hover {
+    background: var(--background);
+}
+
+.emoji-option.selected {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+.color-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+}
+
+.color-option {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 3px solid transparent;
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+}
+
+.color-option.selected {
+    border-color: var(--text-primary);
+    transform: scale(1.15);
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    position: sticky;
+    bottom: 0;
+    background: var(--surface);
+}
+
+.modal-footer .btn {
+    flex: 1;
+}
+
+/* Gràfics */
+.charts-section {
+    background: var(--surface);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px var(--shadow);
+    margin-bottom: 15px;
+}
+
+.charts-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+.chart-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+
+.chart-tab {
+    padding: 8px 16px;
+    background: var(--background);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    color: var(--text-primary);
+}
+
+.chart-tab.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    font-weight: 600;
+}
+
+.time-filters {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 15px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+
+.time-filter-btn {
+    padding: 6px 12px;
+    background: var(--pill-bg);
+    border: none;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    color: var(--text-primary);
+}
+
+.time-filter-btn.active {
+    background: var(--secondary-color);
+    color: white;
+    font-weight: 600;
+}
+
+.chart-view {
+    display: none;
+}
+
+.chart-view.active {
+    display: block;
+}
+
+.chart-container {
+    background: var(--background);
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.chart-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.no-data-message {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 40px 20px;
+    font-size: 0.9rem;
+}
+
+/* Distribution chart */
+.distribution-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.distribution-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.distribution-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.distribution-info {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.distribution-name {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.distribution-percentage {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+/* ================================================
+   FASE 3: RECORDATORIS INTEL·LIGENTS
+================================================ */
+
+/* Botó de recordatoris amb estil especial */
+.tool-btn.reminder-btn {
+    background: linear-gradient(135deg, var(--reminder-color), #FF8E53);
+}
+
+/* Modal de recordatoris */
+.reminder-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    background: var(--background);
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.status-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.status-icon {
+    font-size: 2rem;
+}
+
+.status-text h4 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.status-text p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.toggle-switch {
+    position: relative;
+    width: 56px;
+    height: 32px;
+    background: var(--border);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.toggle-switch.active {
+    background: var(--secondary-color);
+}
+
+.toggle-slider {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 50%;
+    transition: left 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch.active .toggle-slider {
+    left: 28px;
+}
+
+.reminder-config {
+    display: none;
+}
+
+.reminder-config.active {
+    display: block;
+}
+
+.config-group {
+    margin-bottom: 20px;
+}
+
+.config-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.frequency-selector {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.frequency-btn {
+    flex: 1;
+    min-width: 60px;
+    padding: 12px;
+    background: var(--background);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.frequency-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.times-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.time-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: var(--background);
+    border-radius: 8px;
+}
+
+.time-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: var(--surface);
+    color: var(--text-primary);
+}
+
+.remove-time-btn {
+    padding: 8px 12px;
+    background: var(--danger-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.remove-time-btn:active {
+    transform: scale(0.95);
+}
+
+.add-time-btn {
+    width: 100%;
+    padding: 10px;
+    background: var(--background);
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.add-time-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--surface);
+}
+
+.next-reminder-preview {
+    padding: 15px;
+    background: linear-gradient(135deg, #E3F2FD, #F1F8E9);
+    border-radius: 10px;
+    text-align: center;
+}
+
+body.dark-mode .next-reminder-preview {
+    background: linear-gradient(135deg, #1e3a5f, #2d4a2d);
+}
+
+.preview-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.preview-time {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.permission-warning {
+    padding: 15px;
+    background: #FFF3CD;
+    border-left: 4px solid #FFC107;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+body.dark-mode .permission-warning {
+    background: #4a4a2a;
+}
+
+.permission-warning p {
+    font-size: 0.85rem;
+    color: #856404;
+    margin-bottom: 10px;
+}
+
+body.dark-mode .permission-warning p {
+    color: #FFE082;
+}
+
+.permission-btn {
+    width: 100%;
+    padding: 10px;
+    background: #FFC107;
+    color: #856404;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.permission-btn:hover {
+    background: #FFB300;
+}
+
+/* Banner de recordatori in-app */
+.reminder-banner {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 20px);
+    max-width: 400px;
+    background: linear-gradient(135deg, var(--reminder-color), #FF8E53);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transition: bottom 0.3s ease;
+    z-index: 150;
+}
+
+.reminder-banner.show {
+    bottom: 20px;
+}
+
+.banner-content {
+    text-align: center;
+}
+
+.banner-emoji {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.banner-message {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.banner-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.banner-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.banner-btn.primary {
+    background: white;
+    color: var(--reminder-color);
+}
+
+.banner-btn.secondary {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.banner-btn:active {
+    transform: scale(0.95);
+}
+
+/* Mode fosc - Toggle switch */
+.theme-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px var(--shadow);
+    transition: all 0.2s ease;
+    z-index: 50;
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.3rem;
+    }
+    
+    .emotions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-tabs {
+        flex-direction: column;
+    }
+    
+    .frequency-selector {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="success-message" id="successMessage">
+        <h3 id="successTitle">✓ Registrat!</h3>
+        <p id="successText">El teu registre s'ha guardat correctament.</p>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>💙 ITuBè?</h1>
+            <div class="subtitle">El teu seguiment emocional personal</div>
+            <div class="version-badge">v3.0 COMPLETA 🎉</div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value" id="totalEntries">0</div>
+                <div class="stat-label">Registres</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="thisMonthCount">0</div>
+                <div class="stat-label">Aquest mes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="thisWeekCount">0</div>
+                <div class="stat-label">Aquesta setmana</div>
+            </div>
+        </div>
+
+        <!-- Secció de Context (FASE 1) -->
+        <section class="context-section">
+            <div class="context-header" id="contextToggle">
+                <h3>📍 Context (opcional)</h3>
+                <span class="toggle-icon" id="toggleIcon">▼</span>
+            </div>
+            <div class="context-content" id="contextContent">
+                <div class="context-group">
+                    <label class="context-label">Què estaves fent?</label>
+                    <div class="context-pills" id="activityPills">
+                        <div class="context-pill" data-activity="treballant">💼 Treballant</div>
+                        <div class="context-pill" data-activity="estudiant">📚 Estudiant</div>
+                        <div class="context-pill" data-activity="exercici">🏃 Exercici</div>
+                        <div class="context-pill" data-activity="descansant">😌 Descansant</div>
+                        <div class="context-pill" data-activity="cuinant">🍳 Cuinant</div>
+                        <div class="context-pill" data-activity="netejant">🧹 Netejant</div>
+                        <div class="context-pill" data-activity="comprant">🛒 Comprant</div>
+                        <div class="context-pill" data-activity="viatjant">✈️ Viatjant</div>
+                        <div class="context-pill" data-activity="hobby">🎨 Hobby</div>
+                    </div>
+                </div>
+
+                <div class="context-group">
+                    <label class="context-label">Amb qui estaves?</label>
+                    <div class="context-pills" id="socialPills">
+                        <div class="context-pill" data-social="sol">🧘 Sol/a</div>
+                        <div class="context-pill" data-social="parella">💑 Parella</div>
+                        <div class="context-pill" data-social="familia">👨‍👩‍👧‍👦 Família</div>
+                        <div class="context-pill" data-social="amics">👥 Amics</div>
+                        <div class="context-pill" data-social="companys">💼 Companys</div>
+                        <div class="context-pill" data-social="desconeguts">🌍 Desconeguts</div>
+                    </div>
+                </div>
+
+                <div class="context-group">
+                    <label class="context-label">Quin temps feia?</label>
+                    <div class="context-pills" id="weatherPills">
+                        <div class="context-pill" data-weather="assolellat">☀️ Assolellat</div>
+                        <div class="context-pill" data-weather="nuvolat">☁️ Nuvolat</div>
+                        <div class="context-pill" data-weather="pluja">🌧️ Pluja</div>
+                        <div class="context-pill" data-weather="neu">❄️ Neu</div>
+                        <div class="context-pill" data-weather="vent">💨 Vent</div>
+                        <div class="context-pill" data-weather="boira">🌫️ Boira</div>
+                    </div>
+                </div>
+
+                <div class="context-group">
+                    <label class="context-label">On estaves?</label>
+                    <div class="context-pills" id="locationPills">
+                        <div class="context-pill" data-location="casa">🏠 Casa</div>
+                        <div class="context-pill" data-location="feina">🏢 Feina</div>
+                        <div class="context-pill" data-location="carrer">🚶 Carrer</div>
+                        <div class="context-pill" data-location="transport">🚌 Transport</div>
+                        <div class="context-pill" data-location="natura">🌳 Natura</div>
+                        <div class="context-pill" data-location="restaurant">🍽️ Restaurant</div>
+                        <div class="context-pill" data-location="botiga">🛍️ Botiga</div>
+                        <div class="context-pill" data-location="gimnas">💪 Gimnàs</div>
+                    </div>
+                </div>
+
+                <div class="context-group">
+                    <label class="context-label">Moment del dia:</label>
+                    <div class="context-pills" id="timeOfDayPills">
+                        <div class="context-pill" data-timeofday="mati">🌅 Matí</div>
+                        <div class="context-pill" data-timeofday="migdia">☀️ Migdia</div>
+                        <div class="context-pill" data-timeofday="tarda">🌆 Tarda</div>
+                        <div class="context-pill" data-timeofday="nit">🌙 Nit</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="quick-register">
+            <h2>Com et sents?</h2>
+            
+            <div class="emotions-grid" id="emotionsGrid">
+                <!-- Les emocions es carregaran dinàmicament -->
+            </div>
+
+            <div class="selected-count" id="selectedCount">
+                Selecciona almenys una emoció
+            </div>
+
+            <!-- FASE 4: Slider d'intensitat 1-10 -->
+            <div class="intensity-section">
+                <label class="intensity-label">Intensitat de l'emoció:</label>
+                <div class="intensity-slider-container">
+                    <div class="intensity-slider-wrapper">
+                        <input type="range" 
+                               id="intensitySlider" 
+                               class="intensity-slider" 
+                               min="1" 
+                               max="10" 
+                               value="5">
+                        <div class="intensity-value-display" id="intensityValue">5</div>
+                    </div>
+                    <div class="intensity-labels">
+                        <span>1 - Molt lleu</span>
+                        <span>10 - Molt intens</span>
+                    </div>
+                    <div class="intensity-description" id="intensityDescription">
+                        Intensitat moderada
+                    </div>
+                </div>
+            </div>
+
+            <div class="notes-section">
+                <label for="notesInput" class="intensity-label">Notes (opcional):</label>
+                <textarea 
+                    id="notesInput" 
+                    class="notes-textarea" 
+                    placeholder="Què ha passat? Com et sents? Escriu el que vulguis..."
+                    rows="3"></textarea>
+            </div>
+
+            <div class="register-footer">
+                <button class="btn btn-secondary" id="clearBtn">🔄 Netejar</button>
+                <button class="btn btn-primary" id="saveBtn">💾 Registrar</button>
+            </div>
+        </section>
+
+        <section class="calendar-section">
+            <div class="calendar-header">
+                <h2 id="currentMonth">Novembre 2024</h2>
+                <div class="calendar-nav">
+                    <button class="nav-btn" id="prevMonth">◀</button>
+                    <button class="nav-btn" id="nextMonth">▶</button>
+                </div>
+            </div>
+
+            <div class="weekdays">
+                <div>Dl</div>
+                <div>Dt</div>
+                <div>Dc</div>
+                <div>Dj</div>
+                <div>Dv</div>
+                <div>Ds</div>
+                <div>Dg</div>
+            </div>
+
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Els dies es generaran dinàmicament -->
+            </div>
+        </section>
+
+        <!-- FASE 2: Insights Intel·ligents -->
+        <section class="insights-section">
+            <h3>🧠 Insights</h3>
+            <div id="insightsContainer">
+                <div class="no-insights">
+                    Registra més emocions per veure insights intel·ligents!
+                </div>
+            </div>
+        </section>
+
+        <!-- FASE 4: Gràfics amb 3 tipus -->
+        <section class="charts-section">
+            <h3>📊 Visualitzacions</h3>
+            
+            <!-- Tabs per triar tipus de gràfic -->
+            <div class="chart-tabs">
+                <div class="chart-tab active" data-chart="trend">📈 Tendència</div>
+                <div class="chart-tab" data-chart="emotions">🎨 Emocions</div>
+                <div class="chart-tab" data-chart="distribution">📊 Distribució</div>
+            </div>
+            
+            <!-- Filtres temporals -->
+            <div class="time-filters">
+                <button class="time-filter-btn" data-days="7">7 dies</button>
+                <button class="time-filter-btn active" data-days="30">30 dies</button>
+                <button class="time-filter-btn" data-days="90">3 mesos</button>
+                <button class="time-filter-btn" data-days="180">6 mesos</button>
+                <button class="time-filter-btn" data-days="all">Tot</button>
+            </div>
+            
+            <!-- Gràfic de Tendència -->
+            <div class="chart-view active" id="trendChart">
+                <div class="chart-container">
+                    <div class="chart-title">Registres per dia</div>
+                    <div id="trendChartContent"></div>
+                </div>
+            </div>
+            
+            <!-- Gràfic d'Emocions -->
+            <div class="chart-view" id="emotionsChart">
+                <div class="chart-container">
+                    <div class="chart-title">Emocions més freqüents</div>
+                    <div id="emotionsChartContent"></div>
+                </div>
+            </div>
+            
+            <!-- Gràfic de Distribució (NOU) -->
+            <div class="chart-view" id="distributionChart">
+                <div class="chart-container">
+                    <div class="chart-title">Distribució d'emocions</div>
+                    <div id="distributionChartContent"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tools-section">
+            <h3>🔧 Eines</h3>
+            <!-- FASE 3: Botó de Recordatoris (NOU) -->
+            <button class="tool-btn reminder-btn" id="remindersBtn">
+                ⏰ Configurar Recordatoris
+            </button>
+            <button class="tool-btn" id="manageEmotionsBtn" style="background: linear-gradient(135deg, #9C27B0, #E91E63);">
+                🎨 Gestionar Emocions
+            </button>
+            <button class="tool-btn" id="exportBtn">
+                📥 Exportar JSON
+            </button>
+            <button class="tool-btn" id="exportCsvBtn" style="background: linear-gradient(135deg, #2ECC71, #27AE60);">
+                📊 Exportar CSV
+            </button>
+            <button class="tool-btn" id="exportPdfBtn" style="background: linear-gradient(135deg, #E74C3C, #C0392B);">
+                📄 Exportar PDF
+            </button>
+            <button class="tool-btn" id="importBtn">
+                📤 Importar JSON
+            </button>
+            <input type="file" id="fileInput" class="file-input" accept=".json">
+            <button class="tool-btn btn-danger" id="deleteAllBtn">
+                🗑️ Esborrar Totes les Dades
+            </button>
+        </section>
+    </div>
+
+    <!-- Modal per veure detalls del dia -->
+    <div class="modal" id="dayModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Detalls del dia</h3>
+                <button class="close-btn" id="closeModal">✕</button>
+            </div>
+            <div id="modalBody"></div>
+            <button class="btn btn-danger" id="deleteDayBtn" style="margin: 15px 20px 20px 20px;">
+                🗑️ Esborrar tots els registres d'aquest dia
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal per gestionar emocions personalitzades -->
+    <div class="modal" id="emotionsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="emotionsModalTitle">🎨 Emocions Personalitzades</h3>
+                <button class="close-btn" id="closeEmotionsModal">✕</button>
+            </div>
+            <div id="emotionsModalBody" style="padding: 15px;">
+                <!-- Vista de llista d'emocions -->
+                <div id="emotionsListView">
+                    <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 15px;">
+                        Crea emocions personalitzades per adaptar ITuBè a la teva experiència única.
+                    </p>
+                    <div class="emotion-list" id="customEmotionsList"></div>
+                    <button class="btn btn-primary" id="addEmotionBtn" style="margin-top: 15px; width: 100%;">
+                        ➕ Afegir Emoció Nova
+                    </button>
+                </div>
+                
+                <!-- Vista de crear/editar emoció -->
+                <div id="emotionFormView" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Nom de l'emoció:</label>
+                        <input type="text" id="emotionNameInput" class="form-input" placeholder="Ex: Nostàlgia, Eufòria..." maxlength="20">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Tria un emoji:</label>
+                        <div class="emoji-picker" id="emojiPicker"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Tria un color:</label>
+                        <div class="color-picker-grid" id="colorPicker"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="emotionsModalFooter">
+                <!-- Botons dinàmics segons la vista -->
+            </div>
+        </div>
+    </div>
+
+    <!-- FASE 3: Modal de Recordatoris (NOU) -->
+    <div class="modal" id="remindersModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⏰ Configurar Recordatoris</h3>
+                <button class="close-btn" id="closeRemindersModal">✕</button>
+            </div>
+            <div id="remindersModalBody" style="padding: 20px;">
+                <!-- Status del sistema -->
+                <div class="reminder-status">
+                    <div class="status-info">
+                        <div class="status-icon" id="statusIcon">🔔</div>
+                        <div class="status-text">
+                            <h4 id="statusTitle">Recordatoris Desactivats</h4>
+                            <p id="statusSubtitle">Activa'ls per rebre recordatoris</p>
+                        </div>
+                    </div>
+                    <div class="toggle-switch" id="remindersToggle">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+
+                <!-- Warning de permisos si cal -->
+                <div class="permission-warning" id="permissionWarning" style="display: none;">
+                    <p>📢 <strong>Permisos de notificacions necessaris</strong></p>
+                    <p style="margin-bottom: 0;">Per rebre recordatoris, necessitem el teu permís per mostrar notificacions. Això ens permetrà recordar-te de registrar les teves emocions de forma respectuosa.</p>
+                    <button class="permission-btn" id="requestPermissionBtn">
+                        Activar Notificacions
+                    </button>
+                </div>
+
+                <!-- Configuració (només visible si està activat) -->
+                <div class="reminder-config" id="reminderConfig">
+                    <!-- Freqüència -->
+                    <div class="config-group">
+                        <label class="config-label">Freqüència de recordatoris:</label>
+                        <div class="frequency-selector">
+                            <div class="frequency-btn" data-frequency="1">1/dia</div>
+                            <div class="frequency-btn active" data-frequency="2">2/dia</div>
+                            <div class="frequency-btn" data-frequency="3">3/dia</div>
+                            <div class="frequency-btn" data-frequency="4">4/dia</div>
+                            <div class="frequency-btn" data-frequency="5">5/dia</div>
+                            <div class="frequency-btn" data-frequency="6">6/dia</div>
+                        </div>
+                    </div>
+
+                    <!-- Horaris personalitzats -->
+                    <div class="config-group">
+                        <label class="config-label">Horaris personalitzats:</label>
+                        <div class="times-list" id="timesList">
+                            <div class="time-item">
+                                <input type="time" class="time-input" value="09:00">
+                                <button class="remove-time-btn">✕</button>
+                            </div>
+                            <div class="time-item">
+                                <input type="time" class="time-input" value="20:00">
+                                <button class="remove-time-btn">✕</button>
+                            </div>
+                        </div>
+                        <button class="add-time-btn" id="addTimeBtn">
+                            ➕ Afegir Horari
+                        </button>
+                    </div>
+
+                    <!-- Preview del proper recordatori -->
+                    <div class="next-reminder-preview">
+                        <div class="preview-label">Proper recordatori:</div>
+                        <div class="preview-time" id="nextReminderTime">Avui a les 20:00</div>
+                    </div>
+                </div>
+
+                <!-- Info sobre missatges empàtics -->
+                <div style="margin-top: 20px; padding: 15px; background: var(--background); border-radius: 10px; font-size: 0.85rem; color: var(--text-secondary);">
+                    <p style="margin-bottom: 8px;">💙 <strong>Els recordatoris són empàtics i respectuosos:</strong></p>
+                    <p style="margin: 0;">"Com et sents ara?" • "Tens un moment per un check-in emocional?" • "Hora de connectar amb les teves emocions"</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="saveRemindersBtn" style="flex: 1;">
+                    💾 Guardar Configuració
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FASE 3: Banner de recordatori in-app -->
+    <div class="reminder-banner" id="reminderBanner">
+        <div class="banner-content">
+            <div class="banner-emoji">💙</div>
+            <div class="banner-message" id="bannerMessage">Com et sents en aquest moment?</div>
+            <div class="banner-actions">
+                <button class="banner-btn primary" id="registerNowBtn">
+                    Registrar ara
+                </button>
+                <button class="banner-btn secondary" id="snoozeBannerBtn">
+                    Més tard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botó de mode fosc -->
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+
+    <script>
+// ITuBè v3.0 COMPLETA - Totes les Fases
+const DB_KEY = 'itube_entries';
+const CUSTOM_EMOTIONS_KEY = 'itube_custom_emotions';
+const REMINDERS_CONFIG_KEY = 'itube_reminders_config'; // FASE 3
+
+const appState = {
+    selectedEmotions: new Set(),
+    currentMonth: new Date().getMonth(),
+    currentYear: new Date().getFullYear(),
+    emotionColors: {},
+    selectedContext: {
+        activity: null,
+        social: null,
+        weather: null,
+        location: null,
+        timeOfDay: null
+    },
+    selectedIntensity: 5,
+    editingEntryId: null,
+    customEmotions: [],
+    editingEmotionId: null,
+    currentTimeFilter: 30,
+    currentChartType: 'trend',
+    remindersEnabled: false, // FASE 3
+    reminderTimers: [], // FASE 3
+    lastReminderShown: null // FASE 3
+};
+
+const MONTHS_CA = ['Gener', 'Febrer', 'Març', 'Abril', 'Maig', 'Juny',
+                   'Juliol', 'Agost', 'Setembre', 'Octubre', 'Novembre', 'Desembre'];
+
+// ==========================================
+// FASE 3: MISSATGES EMPÀTICS DELS RECORDATORIS
+// ==========================================
+const REMINDER_MESSAGES = [
+    "💙 Com et sents en aquest moment?",
+    "🧠 Tens un minut per un check-in emocional?",
+    "✨ Moment per connectar amb les teves emocions",
+    "😌 Pausa per l'autoconsciència",
+    "🌟 Què tal et trobes ara mateix?",
+    "💭 Un moment per reflexionar sobre com et sents",
+    "🎯 Hora del teu check-in emocional",
+    "🌈 Com estàs avui?",
+    "💚 Un moment per tu i les teves emocions",
+    "🕊️ Pausa per registrar com et sents"
+];
+
+// ==========================================
+// INICIALITZACIÓ
+// ==========================================
+
+window.addEventListener('DOMContentLoaded', () => {
+    initDOMElements();
+    loadCustomEmotions();
+    renderEmotionButtons();
+    updateStats();
+    renderCalendar();
+    updateIntensitySlider();
+    updateTimeOfDay();
+    setupEventListeners();
+    generateInsights();
+    updateCharts();
+    initReminders(); // FASE 3
+});
+
+function initDOMElements() {
+    window.emotionsGrid = document.getElementById('emotionsGrid');
+    window.selectedCount = document.getElementById('selectedCount');
+    window.intensitySlider = document.getElementById('intensitySlider');
+    window.intensityValue = document.getElementById('intensityValue');
+    window.intensityDescription = document.getElementById('intensityDescription');
+    window.notesInput = document.getElementById('notesInput');
+    window.saveBtn = document.getElementById('saveBtn');
+    window.clearBtn = document.getElementById('clearBtn');
+    window.currentMonth = document.getElementById('currentMonth');
+    window.calendarGrid = document.getElementById('calendarGrid');
+    window.prevMonth = document.getElementById('prevMonth');
+    window.nextMonth = document.getElementById('nextMonth');
+    window.dayModal = document.getElementById('dayModal');
+    window.modalTitle = document.getElementById('modalTitle');
+    window.modalBody = document.getElementById('modalBody');
+    window.closeModal = document.getElementById('closeModal');
+    window.deleteDayBtn = document.getElementById('deleteDayBtn');
+    window.exportBtn = document.getElementById('exportBtn');
+    window.importBtn = document.getElementById('importBtn');
+    window.fileInput = document.getElementById('fileInput');
+    window.deleteAllBtn = document.getElementById('deleteAllBtn');
+    window.successMessage = document.getElementById('successMessage');
+    window.themeToggle = document.getElementById('themeToggle');
+    
+    // Context elements
+    window.contextToggle = document.getElementById('contextToggle');
+    window.contextContent = document.getElementById('contextContent');
+    window.activityPills = document.getElementById('activityPills');
+    window.socialPills = document.getElementById('socialPills');
+    window.weatherPills = document.getElementById('weatherPills');
+    window.locationPills = document.getElementById('locationPills');
+    window.timeOfDayPills = document.getElementById('timeOfDayPills');
+    
+    // FASE 4: Emocions personalitzades
+    window.manageEmotionsBtn = document.getElementById('manageEmotionsBtn');
+    window.emotionsModal = document.getElementById('emotionsModal');
+    window.closeEmotionsModal = document.getElementById('closeEmotionsModal');
+    window.customEmotionsList = document.getElementById('customEmotionsList');
+    window.addEmotionBtn = document.getElementById('addEmotionBtn');
+    window.emotionsListView = document.getElementById('emotionsListView');
+    window.emotionFormView = document.getElementById('emotionFormView');
+    window.emotionsModalFooter = document.getElementById('emotionsModalFooter');
+    window.exportCsvBtn = document.getElementById('exportCsvBtn');
+    window.exportPdfBtn = document.getElementById('exportPdfBtn');
+    
+    // FASE 3: Recordatoris
+    window.remindersBtn = document.getElementById('remindersBtn');
+    window.remindersModal = document.getElementById('remindersModal');
+    window.closeRemindersModal = document.getElementById('closeRemindersModal');
+    window.remindersToggle = document.getElementById('remindersToggle');
+    window.reminderConfig = document.getElementById('reminderConfig');
+    window.permissionWarning = document.getElementById('permissionWarning');
+    window.requestPermissionBtn = document.getElementById('requestPermissionBtn');
+    window.saveRemindersBtn = document.getElementById('saveRemindersBtn');
+    window.timesList = document.getElementById('timesList');
+    window.addTimeBtn = document.getElementById('addTimeBtn');
+    window.reminderBanner = document.getElementById('reminderBanner');
+    window.registerNowBtn = document.getElementById('registerNowBtn');
+    window.snoozeBannerBtn = document.getElementById('snoozeBannerBtn');
+}
+
+function setupEventListeners() {
+    const emotionButtons = emotionsGrid.querySelectorAll('.emotion-btn');
+    emotionButtons.forEach(button => {
+        button.addEventListener('click', () => toggleEmotion(button));
+    });
+
+    intensitySlider.addEventListener('input', updateIntensitySlider);
+    saveBtn.addEventListener('click', saveEntry);
+    clearBtn.addEventListener('click', clearSelection);
+    prevMonth.addEventListener('click', () => navigateMonth(-1));
+    nextMonth.addEventListener('click', () => navigateMonth(1));
+    closeModal.addEventListener('click', () => dayModal.classList.remove('show'));
+    deleteDayBtn.addEventListener('click', deleteDayEntries);
+    exportBtn.addEventListener('click', exportData);
+    importBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', importData);
+    deleteAllBtn.addEventListener('click', deleteAllData);
+    themeToggle.addEventListener('click', toggleTheme);
+    
+    // Context
+    contextToggle.addEventListener('click', toggleContextSection);
+    
+    // Charts
+    const chartTabs = document.querySelectorAll('.chart-tab');
+    chartTabs.forEach(tab => {
+        tab.addEventListener('click', () => switchChart(tab.dataset.chart));
+    });
+    
+    const timeFilters = document.querySelectorAll('.time-filter-btn');
+    timeFilters.forEach(btn => {
+        btn.addEventListener('click', () => filterCharts(btn.dataset.days));
+    });
+    
+    // Theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeToggle.textContent = '☀️';
+    }
+    
+    // Context pills
+    const contextPillTypes = ['activity', 'social', 'weather', 'location', 'timeofday'];
+    const pillContainers = [activityPills, socialPills, weatherPills, locationPills, timeOfDayPills];
+    
+    const activityPillsElements = activityPills.querySelectorAll('.context-pill');
+    activityPillsElements.forEach(pill => {
+        pill.addEventListener('click', () => selectContextPill(pill, 'activity'));
+    });
+    
+    const socialPillsElements = socialPills.querySelectorAll('.context-pill');
+    socialPillsElements.forEach(pill => {
+        pill.addEventListener('click', () => selectContextPill(pill, 'social'));
+    });
+    
+    const weatherPillsElements = weatherPills.querySelectorAll('.context-pill');
+    weatherPillsElements.forEach(pill => {
+        pill.addEventListener('click', () => selectContextPill(pill, 'weather'));
+    });
+    
+    const locationPillsElements = locationPills.querySelectorAll('.context-pill');
+    locationPillsElements.forEach(pill => {
+        pill.addEventListener('click', () => selectContextPill(pill, 'location'));
+    });
+    
+    const timeOfDayPillsElements = timeOfDayPills.querySelectorAll('.context-pill');
+    timeOfDayPillsElements.forEach(pill => {
+        pill.addEventListener('click', () => selectContextPill(pill, 'timeofday'));
+    });
+    
+    // FASE 4: Emocions personalitzades
+    manageEmotionsBtn.addEventListener('click', openEmotionsModal);
+    closeEmotionsModal.addEventListener('click', closeEmotionsModalFunc);
+    addEmotionBtn.addEventListener('click', showEmotionForm);
+    exportCsvBtn.addEventListener('click', exportCSV);
+    exportPdfBtn.addEventListener('click', exportPDF);
+    
+    // FASE 3: Recordatoris
+    remindersBtn.addEventListener('click', openRemindersModal);
+    closeRemindersModal.addEventListener('click', closeRemindersModalFunc);
+    remindersToggle.addEventListener('click', toggleReminders);
+    requestPermissionBtn.addEventListener('click', requestNotificationPermission);
+    saveRemindersBtn.addEventListener('click', saveRemindersConfig);
+    addTimeBtn.addEventListener('click', addTimeSlot);
+    registerNowBtn.addEventListener('click', () => {
+        hideReminderBanner();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    snoozeBannerBtn.addEventListener('click', snoozeReminder);
+    
+    // Event delegation per frequency buttons i time removes
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('frequency-btn')) {
+            setFrequency(e.target);
+        }
+        if (e.target.classList.contains('remove-time-btn')) {
+            removeTimeSlot(e.target);
+        }
+    });
+}
+
+function toggleContextSection() {
+    const isOpen = contextContent.classList.contains('open');
+    contextContent.classList.toggle('open');
+    document.getElementById('toggleIcon').classList.toggle('open');
+}
+
+function updateTimeOfDay() {
+    const hour = new Date().getHours();
+    let timeOfDay;
+    
+    if (hour >= 6 && hour < 12) timeOfDay = 'mati';
+    else if (hour >= 12 && hour < 18) timeOfDay = 'migdia';
+    else if (hour >= 18 && hour < 22) timeOfDay = 'tarda';
+    else timeOfDay = 'nit';
+    
+    const pills = timeOfDayPills.querySelectorAll('.context-pill');
+    pills.forEach(pill => {
+        if (pill.dataset.timeofday === timeOfDay) {
+            pill.classList.add('selected');
+            appState.selectedContext.timeOfDay = timeOfDay;
+        }
+    });
+}
+
+function selectContextPill(pill, type) {
+    const container = pill.parentElement;
+    const value = pill.dataset[type];
+    
+    // Si ja estava seleccionat, deseleccionar
+    if (pill.classList.contains('selected')) {
+        pill.classList.remove('selected');
+        appState.selectedContext[type] = null;
+    } else {
+        // Deseleccionar tots del mateix tipus
+        container.querySelectorAll('.context-pill').forEach(p => p.classList.remove('selected'));
+        // Seleccionar el nou
+        pill.classList.add('selected');
+        appState.selectedContext[type] = value;
+    }
+}
+
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function toggleTheme() {
+    const isDark = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    themeToggle.textContent = isDark ? '☀️' : '🌙';
+}
+
+function updateIntensitySlider() {
+    const value = parseInt(intensitySlider.value);
+    appState.selectedIntensity = value;
+    intensityValue.textContent = value;
+    
+    // Actualitzar descripció
+    const descriptions = {
+        1: "Gairebé imperceptible",
+        2: "Molt lleu",
+        3: "Lleu",
+        4: "Lleugerament moderat",
+        5: "Moderada",
+        6: "Notablement moderat",
+        7: "Intensa",
+        8: "Molt intensa",
+        9: "Extremadament intensa",
+        10: "Màxima intensitat"
+    };
+    
+    intensityDescription.textContent = descriptions[value];
+}
+
+// ==========================================
+// EMOCIONS PERSONALITZADES - FASE 4
+// ==========================================
+
+function loadCustomEmotions() {
+    const saved = localStorage.getItem(CUSTOM_EMOTIONS_KEY);
+    appState.customEmotions = saved ? JSON.parse(saved) : [];
+}
+
+function saveCustomEmotionsToStorage() {
+    localStorage.setItem(CUSTOM_EMOTIONS_KEY, JSON.stringify(appState.customEmotions));
+}
+
+function renderEmotionButtons() {
+    // Emocions predefinides
+    const defaultEmotions = [
+        { emoji: '😊', name: 'Feliç', color: '#FFD700' },
+        { emoji: '😢', name: 'Trist', color: '#4682B4' },
+        { emoji: '😠', name: 'Enfadat', color: '#DC143C' },
+        { emoji: '😰', name: 'Ansiós', color: '#FF8C00' },
+        { emoji: '😌', name: 'Relaxat', color: '#98FB98' },
+        { emoji: '😴', name: 'Cansat', color: '#B0C4DE' },
+        { emoji: '😎', name: 'Confiat', color: '#FF69B4' },
+        { emoji: '🤗', name: 'Afectuós', color: '#FFB6C1' },
+        { emoji: '😐', name: 'Neutral', color: '#D3D3D3' },
+        { emoji: '🤔', name: 'Pensatiu', color: '#DDA0DD' },
+        { emoji: '😤', name: 'Frustrat', color: '#FF6347' },
+        { emoji: '😊', name: 'Agraït', color: '#7FFFD4' }
+    ];
+    
+    // Combinar amb emocions personalitzades
+    const allEmotions = [...defaultEmotions, ...appState.customEmotions];
+    
+    emotionsGrid.innerHTML = '';
+    
+    allEmotions.forEach(emotion => {
+        const button = document.createElement('button');
+        button.className = 'emotion-btn';
+        button.dataset.emotion = emotion.name.toLowerCase();
+        button.dataset.color = emotion.color;
+        button.style.borderColor = emotion.color;
+        button.innerHTML = `${emotion.emoji} ${emotion.name}`;
+        button.addEventListener('click', () => toggleEmotion(button));
+        emotionsGrid.appendChild(button);
+        
+        // Guardar color
+        appState.emotionColors[emotion.name.toLowerCase()] = emotion.color;
+    });
+}
+
+function loadEmotionColors() {
+    const emotionButtons = emotionsGrid.querySelectorAll('.emotion-btn');
+    emotionButtons.forEach(button => {
+        const emotion = button.dataset.emotion;
+        const color = button.dataset.color;
+        appState.emotionColors[emotion] = color;
+    });
+}
+
+function toggleEmotion(button) {
+    const emotion = button.dataset.emotion;
+    const color = button.dataset.color;
+    
+    if (appState.selectedEmotions.has(emotion)) {
+        appState.selectedEmotions.delete(emotion);
+        button.classList.remove('selected');
+    } else {
+        appState.selectedEmotions.add(emotion);
+        button.classList.add('selected');
+        button.style.borderColor = color;
+    }
+    
+    updateSelectedCount();
+}
+
+function updateSelectedCount() {
+    const count = appState.selectedEmotions.size;
+    if (count === 0) {
+        selectedCount.textContent = 'Selecciona almenys una emoció';
+        selectedCount.style.color = 'var(--text-secondary)';
+    } else {
+        selectedCount.textContent = `${count} emoció${count > 1 ? 'ns' : ''} seleccionada${count > 1 ? 'es' : ''}`;
+        selectedCount.style.color = 'var(--secondary-color)';
+    }
+}
+
+// ==========================================
+// REGISTRE D'EMOCIONS
+// ==========================================
+
+function saveEntry() {
+    if (appState.selectedEmotions.size === 0) {
+        alert('Selecciona almenys una emoció!');
+        return;
+    }
+
+    const notes = notesInput.value.trim();
+    const intensity = appState.selectedIntensity;
+    
+    // Recollir context
+    const context = {
+        activity: appState.selectedContext.activity,
+        social: appState.selectedContext.social,
+        weather: appState.selectedContext.weather,
+        location: appState.selectedContext.location,
+        timeOfDay: appState.selectedContext.timeOfDay
+    };
+
+    if (appState.editingEntryId !== null) {
+        // Editar entrada existent
+        const entries = getAllEntries();
+        const entryIndex = entries.findIndex(e => e.id === appState.editingEntryId);
+        if (entryIndex !== -1) {
+            entries[entryIndex] = {
+                ...entries[entryIndex],
+                emotions: Array.from(appState.selectedEmotions),
+                notes: notes,
+                intensity: intensity,
+                context: context,
+                timestamp: Date.now()
+            };
+            localStorage.setItem(DB_KEY, JSON.stringify(entries));
+            showSuccessMessage('✓ Actualitzat!', 'El registre s\'ha actualitzat correctament.');
+        }
+        appState.editingEntryId = null;
+    } else {
+        // Crear nova entrada
+        const entry = {
+            id: Date.now(),
+            date: new Date().toISOString().split('T')[0],
+            emotions: Array.from(appState.selectedEmotions),
+            notes: notes,
+            intensity: intensity,
+            context: context,
+            timestamp: Date.now()
+        };
+
+        const entries = getAllEntries();
+        entries.push(entry);
+        localStorage.setItem(DB_KEY, JSON.stringify(entries));
+        showSuccessMessage('✓ Registrat!', 'El teu registre s\'ha guardat correctament.');
+    }
+
+    clearSelection();
+    updateStats();
+    renderCalendar();
+    generateInsights();
+    updateCharts();
+}
+
+function clearSelection() {
+    appState.selectedEmotions.clear();
+    const emotionButtons = emotionsGrid.querySelectorAll('.emotion-btn');
+    emotionButtons.forEach(button => button.classList.remove('selected'));
+    updateSelectedCount();
+    notesInput.value = '';
+    intensitySlider.value = 5;
+    updateIntensitySlider();
+    clearContextSelection();
+    appState.editingEntryId = null;
+}
+
+function clearContextSelection() {
+    appState.selectedContext = {
+        activity: null,
+        social: null,
+        weather: null,
+        location: null,
+        timeOfDay: null
+    };
+    
+    const allPills = document.querySelectorAll('.context-pill');
+    allPills.forEach(pill => pill.classList.remove('selected'));
+    
+    updateTimeOfDay();
+}
+
+function showSuccessMessage(title, text) {
+    document.getElementById('successTitle').textContent = title;
+    document.getElementById('successText').textContent = text;
+    successMessage.classList.add('show');
+    setTimeout(() => {
+        successMessage.classList.remove('show');
+    }, 3000);
+}
+
+// ==========================================
+// GESTIÓ DE DADES
+// ==========================================
+
+function getAllEntries() {
+    const data = localStorage.getItem(DB_KEY);
+    return data ? JSON.parse(data) : [];
+}
+
+function getEntriesByDate(date) {
+    const entries = getAllEntries();
+    return entries.filter(e => e.date === date);
+}
+
+function getEntriesByMonth(year, month) {
+    const entries = getAllEntries();
+    return entries.filter(e => {
+        const entryDate = new Date(e.date);
+        return entryDate.getFullYear() === year && entryDate.getMonth() === month;
+    });
+}
+
+// ==========================================
+// ESTADÍSTIQUES
+// ==========================================
+
+function updateStats() {
+    const entries = getAllEntries();
+    document.getElementById('totalEntries').textContent = entries.length;
+    
+    const now = new Date();
+    const thisMonthEntries = entries.filter(e => {
+        const d = new Date(e.date);
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+    document.getElementById('thisMonthCount').textContent = thisMonthEntries.length;
+    
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1));
+    startOfWeek.setHours(0, 0, 0, 0);
+    
+    const thisWeekEntries = entries.filter(e => new Date(e.date) >= startOfWeek);
+    document.getElementById('thisWeekCount').textContent = thisWeekEntries.length;
+}
+
+// ==========================================
+// CALENDARI
+// ==========================================
+
+function navigateMonth(direction) {
+    appState.currentMonth += direction;
+    if (appState.currentMonth > 11) {
+        appState.currentMonth = 0;
+        appState.currentYear++;
+    } else if (appState.currentMonth < 0) {
+        appState.currentMonth = 11;
+        appState.currentYear--;
+    }
+    renderCalendar();
+}
+
+function renderCalendar() {
+    const year = appState.currentYear;
+    const month = appState.currentMonth;
+    
+    currentMonth.textContent = `${MONTHS_CA[month]} ${year}`;
+    
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    
+    let startDayOfWeek = firstDay.getDay();
+    startDayOfWeek = startDayOfWeek === 0 ? 6 : startDayOfWeek - 1;
+    
+    const prevMonthDays = new Date(year, month, 0).getDate();
+    
+    calendarGrid.innerHTML = '';
+    
+    // Dies del mes anterior
+    for (let i = startDayOfWeek - 1; i >= 0; i--) {
+        const day = prevMonthDays - i;
+        const cell = createDayCell(day, true);
+        calendarGrid.appendChild(cell);
+    }
+    
+    // Dies del mes actual
+    for (let day = 1; day <= daysInMonth; day++) {
+        const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const cell = createDayCell(day, false, date);
+        
+        const today = new Date().toISOString().split('T')[0];
+        if (date === today) {
+            cell.classList.add('today');
+        }
+        
+        const entries = getEntriesByDate(date);
+        if (entries.length > 0) {
+            cell.classList.add('has-entry');
+            const dotsContainer = document.createElement('div');
+            dotsContainer.className = 'emotion-dots';
+            
+            const uniqueEmotions = new Set();
+            entries.forEach(entry => {
+                entry.emotions.forEach(emotion => uniqueEmotions.add(emotion));
+            });
+            
+            Array.from(uniqueEmotions).slice(0, 3).forEach(emotion => {
+                const dot = document.createElement('div');
+                dot.className = 'emotion-dot';
+                dot.style.backgroundColor = appState.emotionColors[emotion] || '#999';
+                dotsContainer.appendChild(dot);
+            });
+            
+            cell.appendChild(dotsContainer);
+        }
+        
+        cell.addEventListener('click', () => showDayDetails(date, entries));
+        calendarGrid.appendChild(cell);
+    }
+    
+    // Dies del mes següent
+    const totalCells = calendarGrid.children.length;
+    const remainingCells = 42 - totalCells;
+    for (let day = 1; day <= remainingCells; day++) {
+        const cell = createDayCell(day, true);
+        calendarGrid.appendChild(cell);
+    }
+}
+
+function createDayCell(day, isOtherMonth, date = null) {
+    const cell = document.createElement('div');
+    cell.className = 'day-cell';
+    if (isOtherMonth) {
+        cell.classList.add('other-month');
+    }
+    cell.textContent = day;
+    return cell;
+}
+
+// ==========================================
+// MODAL DE DETALLS DEL DIA
+// ==========================================
+
+function showDayDetails(date, entries) {
+    const dateObj = new Date(date + 'T12:00:00');
+    modalTitle.textContent = `${dateObj.getDate()} de ${MONTHS_CA[dateObj.getMonth()]} de ${dateObj.getFullYear()}`;
+    
+    modalBody.innerHTML = '';
+    
+    if (entries.length === 0) {
+        modalBody.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Cap registre aquest dia</p>';
+        deleteDayBtn.style.display = 'none';
+    } else {
+        deleteDayBtn.style.display = 'block';
+        deleteDayBtn.onclick = () => deleteDayEntries(date);
+        
+        entries.forEach(entry => {
+            const entryDiv = document.createElement('div');
+            entryDiv.className = 'entry-item';
+            
+            const time = new Date(entry.timestamp).toLocaleTimeString('ca', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            let html = `<div class="entry-time">${time}</div>`;
+            
+            html += '<div class="entry-emotions">';
+            entry.emotions.forEach(emotion => {
+                const color = appState.emotionColors[emotion] || '#999';
+                html += `<span class="emotion-tag" style="background-color: ${color}; color: white;">${capitalize(emotion)}</span>`;
+            });
+            html += '</div>';
+            
+            if (entry.intensity) {
+                html += `<div class="entry-intensity">Intensitat: ${entry.intensity}/10</div>`;
+            }
+            
+            if (entry.notes) {
+                html += `<div class="entry-notes">${entry.notes}</div>`;
+            }
+            
+            // Mostrar context si n'hi ha
+            const context = entry.context || {};
+            const hasContext = Object.values(context).some(v => v !== null && v !== undefined);
+            
+            if (hasContext) {
+                html += '<div class="entry-context">';
+                html += '<div class="context-title">Context:</div>';
+                html += '<div class="context-items">';
+                
+                if (context.activity) html += `<span class="context-tag">💼 ${capitalize(context.activity)}</span>`;
+                if (context.social) html += `<span class="context-tag">👥 ${capitalize(context.social)}</span>`;
+                if (context.timeOfDay) html += `<span class="context-tag">🕐 ${capitalize(context.timeOfDay)}</span>`;
+                if (context.weather) html += `<span class="context-tag">🌤️ ${capitalize(context.weather)}</span>`;
+                if (context.location) html += `<span class="context-tag">📍 ${capitalize(context.location)}</span>`;
+                
+                html += '</div>';
+                html += '</div>';
+            }
+            
+            entryDiv.innerHTML = html;
+            modalBody.appendChild(entryDiv);
+        });
+    }
+    
+    dayModal.classList.add('show');
+}
+
+function deleteDayEntries(date) {
+    if (!confirm('Segur que vols esborrar tots els registres d\'aquest dia?')) {
+        return;
+    }
+    
+    const entries = getAllEntries();
+    const filtered = entries.filter(e => e.date !== date);
+    localStorage.setItem(DB_KEY, JSON.stringify(filtered));
+    
+    dayModal.classList.remove('show');
+    updateStats();
+    renderCalendar();
+    generateInsights();
+    updateCharts();
+    showSuccessMessage('🗑️ Esborrat!', 'Els registres del dia s\'han esborrat.');
+}
+
+// ==========================================
+// EXPORTACIÓ I IMPORTACIÓ
+// ==========================================
+
+function exportData() {
+    const entries = getAllEntries();
+    const dataStr = JSON.stringify(entries, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `itube_backup_${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    showSuccessMessage('📥 Exportat!', 'Les teves dades s\'han descarregat correctament.');
+}
+
+function importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (Array.isArray(data)) {
+                if (confirm('Vols reemplaçar les dades actuals o combinar-les?', 'Reemplaçar')) {
+                    localStorage.setItem(DB_KEY, JSON.stringify(data));
+                } else {
+                    const existing = getAllEntries();
+                    const combined = [...existing, ...data];
+                    localStorage.setItem(DB_KEY, JSON.stringify(combined));
+                }
+                updateStats();
+                renderCalendar();
+                generateInsights();
+                updateCharts();
+                showSuccessMessage('📤 Importat!', 'Les dades s\'han importat correctament.');
+            } else {
+                alert('Format de fitxer incorrecte!');
+            }
+        } catch (error) {
+            alert('Error al llegir el fitxer!');
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+}
+
+function deleteAllData() {
+    if (confirm('⚠️ ATENCIÓ: Això esborrarà TOTES les teves dades de forma permanent. Aquesta acció no es pot desfer. Estàs segur?')) {
+        if (confirm('Última confirmació: Vols esborrar TOTES les dades?')) {
+            localStorage.removeItem(DB_KEY);
+            updateStats();
+            renderCalendar();
+            generateInsights();
+            updateCharts();
+            showSuccessMessage('🗑️ Dades esborrades', 'Totes les dades s\'han esborrat.');
+        }
+    }
+}
+
+// ==========================================
+// FASE 2: INSIGHTS INTEL·LIGENTS
+// ==========================================
+
+function generateInsights() {
+    const container = document.getElementById('insightsContainer');
+    const entries = getAllEntries();
+    
+    if (entries.length < 3) {
+        container.innerHTML = '<div class="no-insights">Registra més emocions per veure insights intel·ligents!</div>';
+        return;
+    }
+    
+    const insights = [];
+    
+    // 1. Emoció més freqüent
+    const emotionCounts = {};
+    entries.forEach(entry => {
+        entry.emotions.forEach(emotion => {
+            emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;
+        });
+    });
+    
+    const topEmotion = Object.entries(emotionCounts)
+        .sort((a, b) => b[1] - a[1])[0];
+    
+    if (topEmotion) {
+        insights.push({
+            title: '🎯 Emoció dominant',
+            text: `${capitalize(topEmotion[0])} és la teva emoció més freqüent (${topEmotion[1]} cops). Això pot indicar patrons emocionals consistents.`
+        });
+    }
+    
+    // 2. Intensitat mitjana
+    const intensities = entries.filter(e => e.intensity).map(e => e.intensity);
+    if (intensities.length > 0) {
+        const avgIntensity = (intensities.reduce((a, b) => a + b, 0) / intensities.length).toFixed(1);
+        let interpretation = '';
+        if (avgIntensity < 4) interpretation = 'Les teves emocions tendeixen a ser lleugeres.';
+        else if (avgIntensity < 7) interpretation = 'Les teves emocions tenen intensitat moderada.';
+        else interpretation = 'Les teves emocions tendeixen a ser intenses.';
+        
+        insights.push({
+            title: '📊 Intensitat emocional',
+            text: `La teva intensitat mitjana és ${avgIntensity}/10. ${interpretation}`
+        });
+    }
+    
+    // 3. Patró de context més freqüent
+    const contextCombos = {};
+    entries.forEach(entry => {
+        if (entry.context) {
+            const ctx = entry.context;
+            Object.entries(ctx).forEach(([key, value]) => {
+                if (value) {
+                    const comboKey = `${key}:${value}`;
+                    contextCombos[comboKey] = (contextCombos[comboKey] || 0) + 1;
+                }
+            });
+        }
+    });
+    
+    const topContext = Object.entries(contextCombos)
+        .sort((a, b) => b[1] - a[1])[0];
+    
+    if (topContext && topContext[1] >= 3) {
+        const [key, value] = topContext[0].split(':');
+        const labels = {
+            'activity': '💼 Activitat',
+            'social': '👥 Context social',
+            'weather': '🌤️ Clima',
+            'location': '📍 Lloc',
+            'timeOfDay': '🕐 Moment'
+        };
+        insights.push({
+            title: '📍 Patró contextual',
+            text: `Registres més freqüents quan: ${labels[key]} = ${capitalize(value)} (${topContext[1]} cops)`
+        });
+    }
+    
+    // 4. Tendència temporal (última setmana vs anterior)
+    const now = Date.now();
+    const oneWeek = 7 * 24 * 60 * 60 * 1000;
+    const lastWeek = entries.filter(e => now - e.timestamp < oneWeek);
+    const prevWeek = entries.filter(e => {
+        const diff = now - e.timestamp;
+        return diff >= oneWeek && diff < oneWeek * 2;
+    });
+    
+    if (lastWeek.length > 0 && prevWeek.length > 0) {
+        const change = lastWeek.length - prevWeek.length;
+        const percentChange = Math.abs((change / prevWeek.length) * 100).toFixed(0);
+        
+        if (Math.abs(change) >= 2) {
+            const trend = change > 0 ? '📈 increment' : '📉 descens';
+            insights.push({
+                title: '📅 Tendència setmanal',
+                text: `Has registrat un ${trend} del ${percentChange}% en l'última setmana (${lastWeek.length} vs ${prevWeek.length} registres).`
+            });
+        }
+    }
+    
+    // 5. Diversitat emocional
+    const uniqueEmotions = new Set();
+    entries.forEach(entry => {
+        entry.emotions.forEach(e => uniqueEmotions.add(e));
+    });
+    
+    const diversity = uniqueEmotions.size;
+    let diversityText = '';
+    if (diversity < 5) diversityText = 'Consideres ampliar el teu vocabulari emocional?';
+    else if (diversity < 10) diversityText = 'Tens una bona varietat emocional.';
+    else diversityText = 'Tens una rica diversitat emocional!';
+    
+    insights.push({
+        title: '🎨 Diversitat emocional',
+        text: `Has experimentat ${diversity} emocions diferents. ${diversityText}`
+    });
+    
+    // Renderitzar insights
+    container.innerHTML = insights.map(insight => `
+        <div class="insight-card">
+            <div class="insight-title">${insight.title}</div>
+            <div class="insight-text">${insight.text}</div>
+        </div>
+    `).join('');
+}
+
+// ==========================================
+// FASE 4: GRÀFICS
+// ==========================================
+
+function switchChart(chartType) {
+    appState.currentChartType = chartType;
+    
+    // Actualitzar tabs
+    document.querySelectorAll('.chart-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.chart === chartType);
+    });
+    
+    // Actualitzar views
+    document.querySelectorAll('.chart-view').forEach(view => {
+        view.classList.toggle('active', view.id === chartType + 'Chart');
+    });
+    
+    updateCharts();
+}
+
+function filterCharts(days) {
+    appState.currentTimeFilter = days === 'all' ? null : parseInt(days);
+    
+    document.querySelectorAll('.time-filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.days === days);
+    });
+    
+    updateCharts();
+}
+
+function updateCharts() {
+    switch(appState.currentChartType) {
+        case 'trend':
+            renderTrendChart();
+            break;
+        case 'emotions':
+            renderEmotionsChart();
+            break;
+        case 'distribution':
+            renderDistributionChart();
+            break;
+    }
+}
+
+function getFilteredEntries() {
+    const entries = getAllEntries();
+    
+    if (appState.currentTimeFilter === null) {
+        return entries;
+    }
+    
+    const now = Date.now();
+    const cutoff = now - (appState.currentTimeFilter * 24 * 60 * 60 * 1000);
+    
+    return entries.filter(e => e.timestamp >= cutoff);
+}
+
+function renderTrendChart() {
+    const entries = getFilteredEntries();
+    
+    if (entries.length === 0) {
+        document.getElementById('trendChartContent').innerHTML = 
+            '<div class="no-data-message">No hi ha dades per mostrar en aquest període</div>';
+        return;
+    }
+    
+    // Agrupar per dia
+    const dayGroups = {};
+    entries.forEach(entry => {
+        const date = entry.date;
+        dayGroups[date] = (dayGroups[date] || 0) + 1;
+    });
+    
+    // Ordenar per data
+    const sortedDays = Object.entries(dayGroups)
+        .sort((a, b) => new Date(a[0]) - new Date(b[0]));
+    
+    // Crear gràfic simple amb barres
+    const maxCount = Math.max(...sortedDays.map(d => d[1]));
+    
+    let html = '<div style="display: flex; flex-direction: column; gap: 8px;">';
+    
+    sortedDays.forEach(([date, count]) => {
+        const percentage = (count / maxCount) * 100;
+        const dateObj = new Date(date);
+        const dateStr = `${dateObj.getDate()}/${dateObj.getMonth() + 1}`;
+        
+        html += `
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 50px; text-align: right; font-size: 0.8rem; color: var(--text-secondary);">
+                    ${dateStr}
+                </div>
+                <div style="flex: 1; height: 24px; background: var(--border); border-radius: 4px; overflow: hidden;">
+                    <div style="height: 100%; width: ${percentage}%; background: var(--primary-color); transition: width 0.3s ease;"></div>
+                </div>
+                <div style="width: 30px; font-size: 0.9rem; font-weight: 600; color: var(--primary-color);">
+                    ${count}
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    
+    document.getElementById('trendChartContent').innerHTML = html;
+}
+
+function renderEmotionsChart() {
+    const entries = getFilteredEntries();
+    
+    if (entries.length === 0) {
+        document.getElementById('emotionsChartContent').innerHTML = 
+            '<div class="no-data-message">No hi ha dades per mostrar en aquest període</div>';
+        return;
+    }
+    
+    // Comptar emocions
+    const emotionCounts = {};
+    entries.forEach(entry => {
+        entry.emotions.forEach(emotion => {
+            emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;
+        });
+    });
+    
+    // Ordenar per freqüència
+    const sortedEmotions = Object.entries(emotionCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10); // Top 10
+    
+    const maxCount = sortedEmotions[0][1];
+    
+    let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
+    
+    sortedEmotions.forEach(([emotion, count]) => {
+        const percentage = (count / maxCount) * 100;
+        const color = appState.emotionColors[emotion] || '#999';
+        
+        html += `
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 12px; height: 12px; border-radius: 50%; background: ${color}; flex-shrink: 0;"></div>
+                <div style="width: 80px; font-size: 0.85rem; color: var(--text-primary);">
+                    ${capitalize(emotion)}
+                </div>
+                <div style="flex: 1; height: 20px; background: var(--border); border-radius: 10px; overflow: hidden;">
+                    <div style="height: 100%; width: ${percentage}%; background: ${color}; transition: width 0.3s ease;"></div>
+                </div>
+                <div style="width: 40px; text-align: right; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">
+                    ${count}
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    
+    document.getElementById('emotionsChartContent').innerHTML = html;
+}
+
+function renderDistributionChart() {
+    const entries = getFilteredEntries();
+    
+    if (entries.length === 0) {
+        document.getElementById('distributionChartContent').innerHTML = 
+            '<div class="no-data-message">No hi ha dades per mostrar en aquest període</div>';
+        return;
+    }
+    
+    // Comptar emocions
+    const emotionCounts = {};
+    entries.forEach(entry => {
+        entry.emotions.forEach(emotion => {
+            emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;
+        });
+    });
+    
+    const totalCount = Object.values(emotionCounts).reduce((a, b) => a + b, 0);
+    
+    // Calcular percentatges
+    const emotionData = Object.entries(emotionCounts)
+        .map(([emotion, count]) => ({
+            emotion,
+            count,
+            percentage: Math.round((count / totalCount) * 100)
+        }))
+        .sort((a, b) => b.count - a.count);
+    
+    // Renderitzar
+    let html = '<div class="distribution-chart">';
+    
+    emotionData.forEach(data => {
+        const color = appState.emotionColors[data.emotion] || '#999';
+        const emotion = data.emotion.charAt(0).toUpperCase() + data.emotion.slice(1);
+        
+        html += `
+            <div class="distribution-item">
+                <div class="distribution-color" style="background: ${color};"></div>
+                <div class="distribution-info">
+                    <span class="distribution-name">${emotion}</span>
+                    <span class="distribution-percentage">${data.percentage}% (${data.count})</span>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    
+    document.getElementById('distributionChartContent').innerHTML = html;
+}
+
+// ==========================================
+// EXPORTACIÓ CSV - FASE 4
+// ==========================================
+
+function exportCSV() {
+    const entries = getAllEntries();
+    
+    if (entries.length === 0) {
+        alert('⚠️ No hi ha dades per exportar.');
+        return;
+    }
+    
+    // Capçaleres CSV
+    const headers = [
+        'Data',
+        'Hora',
+        'Emocions',
+        'Intensitat',
+        'Notes',
+        'Activitat',
+        'Context Social',
+        'Moment del Dia',
+        'Clima',
+        'Lloc'
+    ];
+    
+    // Crear files CSV
+    const rows = entries.map(entry => {
+        const date = new Date(entry.timestamp);
+        const dateStr = date.toLocaleDateString('ca');
+        const timeStr = date.toLocaleTimeString('ca', { hour: '2-digit', minute: '2-digit' });
+        
+        // Emocions separades per ;
+        const emotions = entry.emotions.join('; ');
+        
+        // Context
+        const context = entry.context || {};
+        
+        return [
+            dateStr,
+            timeStr,
+            emotions,
+            entry.intensity || '',
+            (entry.notes || '').replace(/"/g, '""'), // Escapar cometes
+            context.activity || '',
+            context.social || '',
+            context.timeOfDay || '',
+            context.weather || '',
+            context.location || ''
+        ].map(field => `"${field}"`).join(',');
+    });
+    
+    // Combinar tot
+    const csv = [headers.join(','), ...rows].join('\n');
+    
+    // Descarregar
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `itube_dades_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    
+    showSuccessMessage('📊 CSV Exportat!', `${entries.length} registres exportats correctament.`);
+}
+
+// ==========================================
+// EXPORTACIÓ PDF - FASE 4
+// ==========================================
+
+function exportPDF() {
+    const entries = getAllEntries();
+    
+    if (entries.length === 0) {
+        alert('⚠️ No hi ha dades per exportar.');
+        return;
+    }
+    
+    // Crear HTML per PDF
+    let html = `
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <title>ITuBè - Informe Emocional</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #2C3E50;
+        }
+        h1 {
+            color: #4A90E2;
+            border-bottom: 3px solid #4A90E2;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #52BE80;
+            margin-top: 30px;
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat-box {
+            flex: 1;
+            background: #F8F9FA;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4A90E2;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #7F8C8D;
+        }
+        .emotion-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: #F8F9FA;
+            border-radius: 5px;
+        }
+        .emotion-bar {
+            flex: 1;
+            height: 20px;
+            background: #E1E8ED;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0 10px;
+        }
+        .emotion-fill {
+            height: 100%;
+            background: #4A90E2;
+        }
+        .entry {
+            margin: 15px 0;
+            padding: 15px;
+            background: #F8F9FA;
+            border-left: 4px solid #4A90E2;
+            border-radius: 5px;
+        }
+        .entry-date {
+            font-weight: bold;
+            color: #4A90E2;
+        }
+        .entry-emotions {
+            margin: 5px 0;
+        }
+        .emotion-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            margin: 2px;
+            background: #E1E8ED;
+            border-radius: 12px;
+            font-size: 0.9em;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #E1E8ED;
+            text-align: center;
+            color: #7F8C8D;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>📊 ITuBè - Informe Emocional</h1>
+    <p><strong>Data de l'informe:</strong> ${new Date().toLocaleDateString('ca', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    })}</p>
+`;
+    
+    // Estadístiques
+    const emotionCounts = {};
+    let totalIntensity = 0;
+    let intensityCount = 0;
+    
+    entries.forEach(entry => {
+        entry.emotions.forEach(emotion => {
+            emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;
+        });
+        if (entry.intensity) {
+            totalIntensity += entry.intensity;
+            intensityCount++;
+        }
+    });
+    
+    const avgIntensity = intensityCount > 0 
+        ? (totalIntensity / intensityCount).toFixed(1) 
+        : 'N/A';
+    
+    html += `
+    <h2>📈 Resum General</h2>
+    <div class="stats">
+        <div class="stat-box">
+            <div class="stat-value">${entries.length}</div>
+            <div class="stat-label">Registres Totals</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value">${Object.keys(emotionCounts).length}</div>
+            <div class="stat-label">Emocions Diferents</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value">${avgIntensity}</div>
+            <div class="stat-label">Intensitat Mitjana</div>
+        </div>
+    </div>
+    `;
+    
+    // Top emocions
+    const topEmotions = Object.entries(emotionCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+    
+    const maxCount = topEmotions[0][1];
+    
+    html += `
+    <h2>🎯 Emocions Més Freqüents</h2>
+    `;
+    
+    topEmotions.forEach(([emotion, count]) => {
+        const percentage = (count / maxCount) * 100;
+        const emotionName = emotion.charAt(0).toUpperCase() + emotion.slice(1);
+        html += `
+        <div class="emotion-item">
+            <div style="width: 120px;">${emotionName}</div>
+            <div class="emotion-bar">
+                <div class="emotion-fill" style="width: ${percentage}%;"></div>
+            </div>
+            <div style="width: 50px; text-align: right;">${count}</div>
+        </div>
+        `;
+    });
+    
+    // Últims 20 registres
+    html += `
+    <h2>📝 Últims Registres</h2>
+    `;
+    
+    const recentEntries = entries.slice(-20).reverse();
+    
+    recentEntries.forEach(entry => {
+        const date = new Date(entry.timestamp);
+        const dateStr = date.toLocaleDateString('ca', { 
+            day: 'numeric', 
+            month: 'short', 
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        html += `
+        <div class="entry">
+            <div class="entry-date">${dateStr}</div>
+            <div class="entry-emotions">
+                ${entry.emotions.map(e => 
+                    `<span class="emotion-tag">${e}</span>`
+                ).join('')}
+            </div>
+            ${entry.intensity ? `<div>Intensitat: ${entry.intensity}/10</div>` : ''}
+            ${entry.notes ? `<div style="margin-top: 5px; font-style: italic;">"${entry.notes}"</div>` : ''}
+        </div>
+        `;
+    });
+    
+    html += `
+    <div class="footer">
+        <p>Generat per ITuBè v3.0 COMPLETA</p>
+        <p>Aplicació de seguiment emocional 100% offline i privada</p>
+    </div>
+</body>
+</html>
+    `;
+    
+    // Crear i descarregar
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `itube_informe_${new Date().toISOString().split('T')[0]}.html`;
+    link.click();
+    URL.revokeObjectURL(url);
+    
+    showSuccessMessage('📄 PDF Exportat!', 'Obre el fitxer HTML i imprimeix com a PDF des del navegador.');
+}
+
+// ==========================================
+// FASE 4: GESTIÓ D'EMOCIONS PERSONALITZADES
+// ==========================================
+
+function openEmotionsModal() {
+    emotionsModal.classList.add('show');
+    showEmotionsList();
+}
+
+function closeEmotionsModalFunc() {
+    emotionsModal.classList.remove('show');
+    appState.editingEmotionId = null;
+}
+
+function showEmotionsList() {
+    emotionsListView.style.display = 'block';
+    emotionFormView.style.display = 'none';
+    renderCustomEmotionsList();
+    
+    emotionsModalFooter.innerHTML = '<button class="btn btn-secondary" onclick="closeEmotionsModalFunc()" style="flex: 1;">Tancar</button>';
+}
+
+function renderCustomEmotionsList() {
+    if (appState.customEmotions.length === 0) {
+        customEmotionsList.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">Encara no has creat cap emoció personalitzada.</p>';
+        return;
+    }
+    
+    customEmotionsList.innerHTML = appState.customEmotions.map((emotion, index) => `
+        <div class="custom-emotion-item">
+            <div class="emotion-info">
+                <div class="emotion-emoji">${emotion.emoji}</div>
+                <div class="emotion-name">${emotion.name}</div>
+                <div class="emotion-color-preview" style="background: ${emotion.color};"></div>
+            </div>
+            <div class="emotion-actions">
+                <button class="icon-btn delete" onclick="deleteCustomEmotion(${index})">🗑️</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function showEmotionForm(editIndex = null) {
+    emotionsListView.style.display = 'none';
+    emotionFormView.style.display = 'block';
+    
+    appState.editingEmotionId = editIndex;
+    
+    // Omplir formulari si estem editant
+    if (editIndex !== null) {
+        const emotion = appState.customEmotions[editIndex];
+        document.getElementById('emotionNameInput').value = emotion.name;
+    } else {
+        document.getElementById('emotionNameInput').value = '';
+    }
+    
+    // Renderitzar emoji picker
+    const emojis = ['😊', '😢', '😡', '😰', '😴', '🤗', '😌', '🥳', '😎', '🤔', 
+                    '😳', '🥺', '😤', '🤯', '😱', '🙃', '😵', '🤩', '😇', '🤪',
+                    '😖', '😣', '😫', '😩', '🥱', '😬', '🤐', '😶', '🙄', '😏'];
+    
+    const emojiPicker = document.getElementById('emojiPicker');
+    emojiPicker.innerHTML = emojis.map(emoji => 
+        `<div class="emoji-option" data-emoji="${emoji}">${emoji}</div>`
+    ).join('');
+    
+    emojiPicker.querySelectorAll('.emoji-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+            emojiPicker.querySelectorAll('.emoji-option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+        });
+    });
+    
+    // Renderitzar color picker
+    const colors = [
+        '#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', 
+        '#FFEAA7', '#DFE6E9', '#A29BFE', '#FD79A8', '#FDCB6E',
+        '#6C5CE7', '#00B894', '#E17055', '#74B9FF', '#A29BFE',
+        '#FD79A8', '#FDCB6E', '#55EFC4', '#81ECEC', '#FAB1A0'
+    ];
+    
+    const colorPicker = document.getElementById('colorPicker');
+    colorPicker.innerHTML = colors.map(color => 
+        `<div class="color-option" data-color="${color}" style="background: ${color};"></div>`
+    ).join('');
+    
+    colorPicker.querySelectorAll('.color-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+            colorPicker.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+        });
+    });
+    
+    // Botons del footer
+    emotionsModalFooter.innerHTML = `
+        <button class="btn btn-secondary" onclick="showEmotionsList()" style="flex: 1;">← Tornar</button>
+        <button class="btn btn-primary" onclick="saveCustomEmotion()" style="flex: 1;">💾 Guardar</button>
+    `;
+}
+
+function saveCustomEmotion() {
+    const name = document.getElementById('emotionNameInput').value.trim();
+    const selectedEmoji = document.querySelector('.emoji-option.selected');
+    const selectedColor = document.querySelector('.color-option.selected');
+    
+    if (!name) {
+        alert('Has de posar un nom a l\'emoció!');
+        return;
+    }
+    
+    if (!selectedEmoji) {
+        alert('Has de triar un emoji!');
+        return;
+    }
+    
+    if (!selectedColor) {
+        alert('Has de triar un color!');
+        return;
+    }
+    
+    const emotion = {
+        emoji: selectedEmoji.dataset.emoji,
+        name: name,
+        color: selectedColor.dataset.color
+    };
+    
+    if (appState.editingEmotionId !== null) {
+        appState.customEmotions[appState.editingEmotionId] = emotion;
+    } else {
+        appState.customEmotions.push(emotion);
+    }
+    
+    saveCustomEmotionsToStorage();
+    renderEmotionButtons();
+    showEmotionsList();
+    showSuccessMessage('✓ Guardat!', 'L\'emoció personalitzada s\'ha guardat.');
+}
+
+function deleteCustomEmotion(index) {
+    if (!confirm('Segur que vols esborrar aquesta emoció personalitzada?')) {
+        return;
+    }
+    
+    appState.customEmotions.splice(index, 1);
+    saveCustomEmotionsToStorage();
+    renderEmotionButtons();
+    renderCustomEmotionsList();
+    showSuccessMessage('🗑️ Esborrat!', 'L\'emoció s\'ha esborrat.');
+}
+
+// ==========================================
+// FASE 3: SISTEMA DE RECORDATORIS
+// ==========================================
+
+function initReminders() {
+    loadRemindersConfig();
+    checkNotificationPermission();
+    
+    // Si estan activats, programar recordatoris
+    if (appState.remindersEnabled) {
+        scheduleReminders();
+    }
+}
+
+function loadRemindersConfig() {
+    const saved = localStorage.getItem(REMINDERS_CONFIG_KEY);
+    if (saved) {
+        const config = JSON.parse(saved);
+        appState.remindersEnabled = config.enabled || false;
+        appState.reminderFrequency = config.frequency || 2;
+        appState.reminderTimes = config.times || ['09:00', '20:00'];
+    } else {
+        appState.remindersEnabled = false;
+        appState.reminderFrequency = 2;
+        appState.reminderTimes = ['09:00', '20:00'];
+    }
+}
+
+function saveRemindersConfigToStorage() {
+    const config = {
+        enabled: appState.remindersEnabled,
+        frequency: appState.reminderFrequency,
+        times: appState.reminderTimes,
+        lastUpdate: Date.now()
+    };
+    localStorage.setItem(REMINDERS_CONFIG_KEY, JSON.stringify(config));
+}
+
+function checkNotificationPermission() {
+    if (!('Notification' in window)) {
+        console.log('Aquest navegador no suporta notificacions');
+        return 'not-supported';
+    }
+    return Notification.permission;
+}
+
+async function requestNotificationPermission() {
+    if (!('Notification' in window)) {
+        alert('❌ El teu navegador no suporta notificacions.');
+        return false;
+    }
+    
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            permissionWarning.style.display = 'none';
+            showSuccessMessage('✓ Permisos activats!', 'Ara rebràs recordatoris.');
+            return true;
+        } else {
+            alert('⚠️ Has denegat els permisos de notificacions. Pots activar-los des de la configuració del navegador.');
+            return false;
+        }
+    } catch (error) {
+        console.error('Error demanant permisos:', error);
+        return false;
+    }
+}
+
+function openRemindersModal() {
+    remindersModal.classList.add('show');
+    updateRemindersModalUI();
+}
+
+function closeRemindersModalFunc() {
+    remindersModal.classList.remove('show');
+}
+
+function updateRemindersModalUI() {
+    // Actualitzar estat del toggle
+    if (appState.remindersEnabled) {
+        remindersToggle.classList.add('active');
+        statusIcon.textContent = '🔔';
+        document.getElementById('statusTitle').textContent = 'Recordatoris Activats';
+        document.getElementById('statusSubtitle').textContent = 'Rebràs recordatoris segons la configuració';
+        reminderConfig.classList.add('active');
+    } else {
+        remindersToggle.classList.remove('active');
+        statusIcon.textContent = '🔕';
+        document.getElementById('statusTitle').textContent = 'Recordatoris Desactivats';
+        document.getElementById('statusSubtitle').textContent = 'Activa\'ls per rebre recordatoris';
+        reminderConfig.classList.remove('active');
+    }
+    
+    // Mostrar/amagar warning de permisos
+    const permission = checkNotificationPermission();
+    if (permission === 'denied' || permission === 'default') {
+        permissionWarning.style.display = 'block';
+    } else {
+        permissionWarning.style.display = 'none';
+    }
+    
+    // Actualitzar freqüència
+    document.querySelectorAll('.frequency-btn').forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.dataset.frequency) === appState.reminderFrequency);
+    });
+    
+    // Renderitzar horaris
+    renderTimeslist();
+    
+    // Actualitzar preview
+    updateNextReminderPreview();
+}
+
+function renderTimesList() {
+    timesList.innerHTML = appState.reminderTimes.map((time, index) => `
+        <div class="time-item">
+            <input type="time" class="time-input" value="${time}" data-index="${index}">
+            <button class="remove-time-btn">✕</button>
+        </div>
+    `).join('');
+    
+    // Event listeners per actualitzar temps
+    timesList.querySelectorAll('.time-input').forEach(input => {
+        input.addEventListener('change', (e) => {
+            const index = parseInt(e.target.dataset.index);
+            appState.reminderTimes[index] = e.target.value;
+            updateNextReminderPreview();
+        });
+    });
+}
+
+function setFrequency(button) {
+    const frequency = parseInt(button.dataset.frequency);
+    appState.reminderFrequency = frequency;
+    
+    // Actualitzar UI
+    document.querySelectorAll('.frequency-btn').forEach(btn => {
+        btn.classList.toggle('active', btn === button);
+    });
+    
+    // Ajustar horaris segons freqüència
+    adjustTimesForFrequency(frequency);
+    renderTimesList();
+    updateNextReminderPreview();
+}
+
+function adjustTimesForFrequency(frequency) {
+    // Suggerir horaris distribuïts al llarg del dia
+    const suggestedTimes = {
+        1: ['12:00'],
+        2: ['09:00', '20:00'],
+        3: ['09:00', '14:00', '20:00'],
+        4: ['09:00', '12:00', '16:00', '20:00'],
+        5: ['08:00', '11:00', '14:00', '17:00', '21:00'],
+        6: ['08:00', '10:30', '13:00', '15:30', '18:00', '21:00']
+    };
+    
+    appState.reminderTimes = suggestedTimes[frequency] || suggestedTimes[2];
+}
+
+function addTimeSlot() {
+    if (appState.reminderTimes.length >= 6) {
+        alert('Ja tens el màxim de 6 horaris configurats.');
+        return;
+    }
+    
+    appState.reminderTimes.push('12:00');
+    renderTimesList();
+    updateNextReminderPreview();
+}
+
+function removeTimeSlot(button) {
+    if (appState.reminderTimes.length <= 1) {
+        alert('Has de tenir almenys un horari configurat.');
+        return;
+    }
+    
+    const timeItem = button.closest('.time-item');
+    const input = timeItem.querySelector('.time-input');
+    const index = parseInt(input.dataset.index);
+    
+    appState.reminderTimes.splice(index, 1);
+    renderTimesList();
+    updateNextReminderPreview();
+}
+
+function updateNextReminderPreview() {
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    
+    // Convertir tots els temps a minuts i ordenar
+    const timesInMinutes = appState.reminderTimes.map(time => {
+        const [hours, mins] = time.split(':').map(Number);
+        return hours * 60 + mins;
+    }).sort((a, b) => a - b);
+    
+    // Trobar el proper temps
+    let nextTime = timesInMinutes.find(t => t > currentMinutes);
+    
+    // Si no n'hi ha cap avui, agafar el primer de demà
+    if (!nextTime) {
+        nextTime = timesInMinutes[0];
+        const hours = Math.floor(nextTime / 60);
+        const mins = nextTime % 60;
+        document.getElementById('nextReminderTime').textContent = 
+            `Demà a les ${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+    } else {
+        const hours = Math.floor(nextTime / 60);
+        const mins = nextTime % 60;
+        document.getElementById('nextReminderTime').textContent = 
+            `Avui a les ${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+    }
+}
+
+async function toggleReminders() {
+    // Si estem activant, primer comprovar permisos
+    if (!appState.remindersEnabled) {
+        const permission = checkNotificationPermission();
+        
+        if (permission === 'default') {
+            const granted = await requestNotificationPermission();
+            if (!granted) {
+                return;
+            }
+        } else if (permission === 'denied') {
+            alert('⚠️ Has denegat els permisos de notificacions. Pots activar-los des de la configuració del navegador.');
+            return;
+        }
+    }
+    
+    appState.remindersEnabled = !appState.remindersEnabled;
+    
+    if (appState.remindersEnabled) {
+        scheduleReminders();
+        showSuccessMessage('⏰ Activat!', 'Els recordatoris s\'han activat correctament.');
+    } else {
+        clearAllReminders();
+        showSuccessMessage('🔕 Desactivat!', 'Els recordatoris s\'han desactivat.');
+    }
+    
+    updateRemindersModalUI();
+}
+
+function scheduleReminders() {
+    // Netejar recordatoris anteriors
+    clearAllReminders();
+    
+    if (!appState.remindersEnabled) return;
+    
+    // Programar cada horari
+    appState.reminderTimes.forEach(time => {
+        scheduleReminderForTime(time);
+    });
+}
+
+function scheduleReminderForTime(timeString) {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    const now = new Date();
+    const scheduledTime = new Date();
+    scheduledTime.setHours(hours, minutes, 0, 0);
+    
+    // Si ja ha passat avui, programar per demà
+    if (scheduledTime <= now) {
+        scheduledTime.setDate(scheduledTime.getDate() + 1);
+    }
+    
+    const delay = scheduledTime.getTime() - now.getTime();
+    
+    const timerId = setTimeout(() => {
+        showReminder();
+        // Re-programar per demà
+        scheduleReminderForTime(timeString);
+    }, delay);
+    
+    appState.reminderTimers.push(timerId);
+}
+
+function clearAllReminders() {
+    appState.reminderTimers.forEach(timerId => clearTimeout(timerId));
+    appState.reminderTimers = [];
+}
+
+function showReminder() {
+    // Comprovar si ja hem mostrat un recordatori recentment (evitar spam)
+    const now = Date.now();
+    if (appState.lastReminderShown && (now - appState.lastReminderShown) < 60000) {
+        return; // No mostrar si fa menys d'1 minut
+    }
+    
+    appState.lastReminderShown = now;
+    
+    // Triar missatge aleatori
+    const message = REMINDER_MESSAGES[Math.floor(Math.random() * REMINDER_MESSAGES.length)];
+    
+    // Intentar mostrar notificació del sistema
+    const permission = checkNotificationPermission();
+    if (permission === 'granted') {
+        try {
+            new Notification('💙 ITuBè', {
+                body: message,
+                icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">💙</text></svg>',
+                badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">💙</text></svg>',
+                vibrate: [200, 100, 200],
+                requireInteraction: false
+            });
+        } catch (error) {
+            console.error('Error mostrant notificació:', error);
+        }
+    }
+    
+    // Sempre mostrar banner in-app com a fallback
+    showReminderBanner(message);
+}
+
+function showReminderBanner(message) {
+    document.getElementById('bannerMessage').textContent = message || REMINDER_MESSAGES[0];
+    reminderBanner.classList.add('show');
+    
+    // Auto-amagar després de 30 segons
+    setTimeout(() => {
+        hideReminderBanner();
+    }, 30000);
+}
+
+function hideReminderBanner() {
+    reminderBanner.classList.remove('show');
+}
+
+function snoozeReminder() {
+    hideReminderBanner();
+    
+    // Re-mostrar en 15 minuts
+    setTimeout(() => {
+        showReminder();
+    }, 15 * 60 * 1000);
+    
+    showSuccessMessage('⏰ Snooze activat', 'Et recordaré en 15 minuts.');
+}
+
+function saveRemindersConfig() {
+    saveRemindersConfigToStorage();
+    
+    if (appState.remindersEnabled) {
+        scheduleReminders();
+    }
+    
+    showSuccessMessage('💾 Guardat!', 'La configuració s\'ha guardat correctament.');
+    closeRemindersModalFunc();
+}
+
+// Funcions globals per poder ser cridades des d'onclick
+function renderTimesList() {
+    renderTimeslist();
+}
+
+function renderTimeslist() {
+    timesList.innerHTML = appState.reminderTimes.map((time, index) => `
+        <div class="time-item">
+            <input type="time" class="time-input" value="${time}" data-index="${index}">
+            <button class="remove-time-btn">✕</button>
+        </div>
+    `).join('');
+    
+    // Event listeners per actualitzar temps
+    timesList.querySelectorAll('.time-input').forEach(input => {
+        input.addEventListener('change', (e) => {
+            const index = parseInt(e.target.dataset.index);
+            appState.reminderTimes[index] = e.target.value;
+            updateNextReminderPreview();
+        });
+    });
+}
+
+// ==========================================
+// FI DEL CODI
+// ==========================================
+
+    </script>
+</body>
+</html>
