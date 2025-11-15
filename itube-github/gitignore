@@ -1,0 +1,33 @@
+# IDE i editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Arxius temporals
+*.tmp
+*.bak
+*.backup
+*-BACKUP-*
+*-OLD-*
+
+# Logs
+*.log
+
+# Arxius de sistema
+Thumbs.db
+desktop.ini
+
+# Node modules
+node_modules/
+
+# Arxius privats
+*-PRIVAT.*
+*-PRIVATE.*
+*-LOCAL.*
+
+# Tests locals
+test-*.html
+demo-*.html
